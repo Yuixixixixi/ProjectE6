@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Buku</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container mt-5" style="max-width: 500px;">
+        <div class="card shadow">
+            <div class="card-header bg-warning">
+                <h5 class="mb-0">Edit Data Buku</h5>
+            </div>
+            <div class="card-body">
+                <form action="/update-book/<%= book.id_buku %>" method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Judul Buku</label>
+                        <input type="text" name="judul_buku" class="form-control" value="<%= book.judul_buku %>" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Stok</label>
+                        <input type="number" name="stok" class="form-control" value="<%= book.stok %>" required>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success">Update Data</button>
+                        <a href="/" class="btn btn-secondary">Batal</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

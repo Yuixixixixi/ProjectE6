@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sirkulasi - E6 Library</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f4f6f9; }
+        .navbar { background: linear-gradient(135deg, #4568dc 0%, #b06ab3 100%); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .card { border: none; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .status-badge { padding: 6px 12px; border-radius: 20px; font-size: 0.85em; font-weight: 600; letter-spacing: 0.5px; }
+        .status-pinjam { background-color: #fff3cd; color: #856404; }
+        .status-kembali { background-color: #d4edda; color: #155724; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark py-3 mb-5">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/"><i class="fas fa-book-reader me-2"></i> E6 Library</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-4">
+                    <li class="nav-item"><a class="nav-link" href="/">📚 Data Buku</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/peminjam">👥 Peminjam</a></li>
+                    <li class="nav-item"><a class="nav-link active fw-bold" href="/transaksi">🔄 Transaksi</a></li>
+                </ul>
+                <div class="ms-auto">
+                    <a href="/logout" class="btn btn-outline-light btn-sm px-3 rounded-pill">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-primary text-white py-3 border-0" style="background: linear-gradient(45deg, #4b6cb7, #182848);">
+                        <h5 class="mb-0 fw-bold"><i class="fas fa-exchange-alt me-2"></i>Sirkulasi Baru</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <form action="/pinjam-buku" method="POST">
+                            <div class="mb-3">
+                                <label class="form-label small text-muted fw-bold">PILIH ANGGOTA</label>
+                                <select name="id_peminjam" class="form-select py-2" required>
+                                    <option value="">-- Cari Nama --</option>
+                                    <% peminjam.forEach(p => { %>
+                                        <option value="<%= p.id_peminjam %>"><%= p.nama %></option>
+                                    <% }) %>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label small text-muted fw-bold">PILIH BUKU</label>
+                                <select name="id_buku" class="form-select py-2" required>
+                                    <option value="">-- Cari Buku --</option>
+                                    <% books.forEach(b => { %>
+                                        <option value="<%= b.id_buku %>"><%= b.judul_buku %> (Sisa: <%= b.stok %>)</option>
+                                    <% }) %>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 py-2 rounded-pill shadow">Catat Peminjaman</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header bg-white py-3 border-bottom">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0 fw-bold text-dark">Log Aktivitas Perpustakaan</h6>
+                            <span class="badge bg-light text-dark border">Realtime Update</span>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="ps-4">Detail Peminjaman</th>
+                                    <th>Waktu</th>
+                                    <th>Status</th>
+                                    <th class="text-end pe-4">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if(transaksi.length > 0) { %>
+                                    <% transaksi.forEach(t => { %>
+                                    <tr>
+                                        <td class="ps-4">
+                                            <div class="fw-bold text-dark"><%= t.nama_peminjam %></div>
+                                            <div class="small text-muted"><i class="fas fa-book me-1"></i> <%= t.judul_buku %></div>
+                                        </td>
+                                        <td class="small text-muted">
+                                            <div>Pinjam: <%= new Date(t.tanggal_pinjam).toLocaleDateString('id-ID') %></div>
+                                            <% if(t.tanggal_pengembalian) { %>
+                                                <div class="text-success">Kembali: <%= new Date(t.tanggal_pengembalian).toLocaleDateString('id-ID') %></div>
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <% if(t.status_peminjaman == 'dipinjam') { %>
+                                                <span class="status-badge status-pinjam">Sedang Dipinjam</span>
+                                            <% } else { %>
+                                                <span class="status-badge status-kembali">Selesai</span>
+                                            <% } %>
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <% if(t.status_peminjaman == 'dipinjam') { %>
+                                                <form action="/kembalikan-buku/<%= t.id_peminjaman %>" method="POST">
+                                                    <input type="hidden" name="id_buku" value="<%= t.id_buku %>">
+                                                    <button type="submit" class="btn btn-sm btn-outline-success rounded-pill px-3 fw-bold">
+                                                        <i class="fas fa-check me-1"></i> Return
+                                                    </button>
+                                                </form>
+                                            <% } else { %>
+                                                <i class="fas fa-check-circle text-success fs-5"></i>
+                                            <% } %>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                <% } else { %>
+                                    <tr><td colspan="4" class="text-center py-5 text-muted">Belum ada riwayat transaksi.</td></tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,10 +1,16 @@
 # Node.js dependencies
 node_modules/
 
-# Environment variables
+# Environment variables (PENTING: Agar password tidak bocor)
 .env
 
-# Ignore environment configuration file
+# Docker Database Volume (PENTING: Tambahkan ini!)
+# Sesuaikan nama folder ini dengan yang ada di docker-compose.yml kamu
+mysql_data/
+mysql-data/
+db_data/
+
+# OS System Files
 .DS_Store
 Thumbs.db
 
